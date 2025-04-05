@@ -6,6 +6,7 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
+extern crate alloc;
 
 #[cfg(test)]
 use bootloader::{BootInfo, entry_point};
@@ -18,6 +19,7 @@ pub mod vga_buffer;
 pub mod interrupts;
 pub mod gdt;
 pub mod memory;
+pub mod allocator;
 
 pub trait Testable {
     fn run(&self) -> ();
