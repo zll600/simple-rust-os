@@ -1,7 +1,7 @@
 use core::ptr;
 
-use alloc::alloc::{GlobalAlloc, Layout};
 use super::{align_up, Locked};
+use alloc::alloc::{GlobalAlloc, Layout};
 
 pub struct BumpAllocator {
     heap_start: usize,

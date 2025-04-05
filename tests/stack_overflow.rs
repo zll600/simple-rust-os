@@ -8,7 +8,6 @@ use lazy_static::lazy_static;
 use blog_os::{exit_qemu, serial_print, QemuExitCode};
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
-
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> i32 {
     serial_print!("stack_overflow::stack_overflow...\t");

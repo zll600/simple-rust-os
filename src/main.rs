@@ -6,12 +6,15 @@
 
 extern crate alloc;
 
-use core::panic::PanicInfo;
 use bootloader::{entry_point, BootInfo};
+use core::panic::PanicInfo;
 
 entry_point!(kernel_main);
 
-use blog_os::{println, task::{executor::Executor, keyboard, Task}};
+use blog_os::{
+    println,
+    task::{executor::Executor, keyboard, Task},
+};
 
 #[cfg(not(test))]
 #[panic_handler]
@@ -27,22 +30,18 @@ fn panic(info: &PanicInfo) -> ! {
 }
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-    use x86_64::VirtAddr;
-    use blog_os::memory;
     use blog_os::allocator;
+    use blog_os::memory;
+    use x86_64::VirtAddr;
 
     println!("Hello, world{}", "!");
     blog_os::init();
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let mut mapper = unsafe {
-        memory::init(phys_mem_offset)
-    };
-    let mut frame_allocator = unsafe {
-        memory::BootInfoFrameAllocator::init(&boot_info.memory_map)
-    };
-    allocator::init_heap(&mut mapper, &mut frame_allocator)
-        .expect("heap initialization failed");
+    let mut mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut frame_allocator =
+        unsafe { memory::BootInfoFrameAllocator::init(&boot_info.memory_map) };
+    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     #[cfg(test)]
     test_main();

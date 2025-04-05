@@ -1,7 +1,7 @@
 use core::fmt;
+use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
-use lazy_static::lazy_static;
 use x86_64::instructions::interrupts;
 
 lazy_static! {
@@ -11,7 +11,6 @@ lazy_static! {
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
 }
-
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -109,7 +108,6 @@ impl Writer {
         }
     }
 
-
     pub fn write_string(&mut self, s: &str) {
         for byte in s.bytes() {
             match byte {
@@ -118,7 +116,6 @@ impl Writer {
                 // not part of printable ASCII range
                 _ => self.write_byte(0xfe),
             }
-
         }
     }
 }
@@ -144,7 +141,7 @@ macro_rules! println {
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
     use core::fmt::Write;
-    
+
     interrupts::without_interrupts(|| {
         WRITER.lock().write_fmt(args).unwrap();
     });

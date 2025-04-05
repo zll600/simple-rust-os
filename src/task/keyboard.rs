@@ -1,9 +1,12 @@
-use core::{pin::Pin, task::{Context, Poll}};
+use core::{
+    pin::Pin,
+    task::{Context, Poll},
+};
 
 use conquer_once::spin::OnceCell;
 use crossbeam_queue::ArrayQueue;
-use futures_util::{Stream, StreamExt};
 use futures_util::task::AtomicWaker;
+use futures_util::{Stream, StreamExt};
 use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 
 use crate::{print, println};
@@ -33,7 +36,8 @@ pub struct ScancodeStream {
 
 impl ScancodeStream {
     pub fn new() -> Self {
-        SCANCODE_QUEUE.try_init_once(|| ArrayQueue::new(100))
+        SCANCODE_QUEUE
+            .try_init_once(|| ArrayQueue::new(100))
             .expect("ScancodeStream::new should only be called once");
         ScancodeStream { _private: () }
     }
@@ -62,8 +66,11 @@ impl Stream for ScancodeStream {
 
 pub async fn print_keypresses() {
     let mut scancodes = ScancodeStream::new();
-    let mut keyboard = Keyboard::new(ScancodeSet1::new(),
-        layouts::Us104Key, HandleControl::Ignore);
+    let mut keyboard = Keyboard::new(
+        ScancodeSet1::new(),
+        layouts::Us104Key,
+        HandleControl::Ignore,
+    );
 
     while let Some(scancode) = scancodes.next().await {
         if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
